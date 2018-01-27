@@ -15,6 +15,8 @@ import Data.Text
 
 import Database.Persist.TH
 
+import OtherModels
+
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Restaurant
   name Text
@@ -22,6 +24,12 @@ Restaurant
   lat Double Maybe
   lon Double Maybe
   RestaurantNameAddress name address
+  deriving Eq Read Show
+
+Special
+  day Day
+  description Text
+  SpecialDayDescription day description
   deriving Eq Read Show
 |]
 
@@ -38,3 +46,13 @@ instance ToJSON Restaurant where
            , "address"  .= address
            , "lat" .= lat
            , "lon" .= lon ]
+
+instance FromJSON Special where
+  parseJSON = withObject "Special" $ \ v ->
+    Special <$> v .: "day"
+            <*> v .: "description"
+
+instance ToJSON Special where
+  toJSON (Special day description) =
+    object [ "day" .= day
+           , "description" .= description ]
