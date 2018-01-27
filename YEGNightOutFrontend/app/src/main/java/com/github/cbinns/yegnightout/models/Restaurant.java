@@ -19,7 +19,7 @@ public class Restaurant {
         this.id=-1;
         this.name="";
         this.address="";
-   }x
+   }
 
    public void setName(String name){
        this.name=name;
