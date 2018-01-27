@@ -24,22 +24,22 @@ import           Models
 
 server :: ConnectionPool -> Server Api
 server pool =
-  userAddH :<|> userGetH
+  restaurantAddH :<|> restaurantGetH
   where
-    userAddH newUser = liftIO $ userAdd newUser
-    userGetH name    = liftIO $ userGet name
+    restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
+    restaurantGetH name    = liftIO $ restaurantGet name
 
-    userAdd :: User -> IO (Maybe (Key User))
-    userAdd newUser = flip runSqlPersistMPool pool $ do
-      exists <- selectFirst [UserName ==. (userName newUser)] []
+    restaurantAdd :: Restaurant -> IO (Maybe (Key Restaurant))
+    restaurantAdd newRestaurant = flip runSqlPersistMPool pool $ do
+      exists <- selectFirst [RestaurantName ==. (restaurantName newRestaurant)] []
       case exists of
-        Nothing -> Just <$> insert newUser
+        Nothing -> Just <$> insert newRestaurant
         Just _ -> return Nothing
 
-    userGet :: Text -> IO (Maybe User)
-    userGet name = flip runSqlPersistMPool pool $ do
-      mUser <- selectFirst [UserName ==. name] []
-      return $ entityVal <$> mUser
+    restaurantGet :: Text -> IO (Maybe Restaurant)
+    restaurantGet name = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectFirst [RestaurantName ==. name] []
+      return $ entityVal <$> mRestaurant
 
 app :: ConnectionPool -> Application
 app pool = serve api $ server pool
