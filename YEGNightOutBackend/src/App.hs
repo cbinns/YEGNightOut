@@ -31,6 +31,7 @@ server pool = restaurantAddH
          :<|> specialAddH
          :<|> specialGetByDayH
          :<|> specialGetByDescriptionH
+         :<|> specialGetByRestaurantNameH
          :<|> specialGetAllH
   where
     restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
@@ -39,7 +40,8 @@ server pool = restaurantAddH
     restaurantGetAllH = liftIO $ restaurantGetAll
     specialAddH newSpecial = liftIO $ specialAdd newSpecial
     specialGetByDayH day    = liftIO $ specialGetByDay day
-    specialGetByDescriptionH day    = liftIO $ specialGetByDescription day
+    specialGetByDescriptionH desc    = liftIO $ specialGetByDescription desc
+    specialGetByRestaurantNameH rname    = liftIO $ specialGetByRestaurantName rname
     specialGetAllH = liftIO $ specialGetAll
 
     restaurantAdd :: Restaurant -> IO (Maybe (Key Restaurant))
@@ -83,6 +85,12 @@ server pool = restaurantAddH
     specialGetByDescription description = flip runSqlPersistMPool pool $ do
       let sql = "select ?? from special where description like ?"
       mSpecial <- (rawSql sql [PersistText (pack ("%" ++ (unpack description) ++ "%"))])
+      return $ entityVal <$> mSpecial
+
+    specialGetByRestaurantName :: Text -> IO [Special]
+    specialGetByRestaurantName rname = flip runSqlPersistMPool pool $ do
+      let sql = "select ?? from special, restaurant where rid = restaurant_id and name like ?"
+      mSpecial <- (rawSql sql [PersistText (pack ("%" ++ (unpack rname) ++ "%"))])
       return $ entityVal <$> mSpecial
 
     specialGetAll :: IO [Special]

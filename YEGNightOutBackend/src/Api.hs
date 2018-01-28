@@ -26,6 +26,7 @@ type Api =
   :<|> "special" :> ReqBody '[JSON] Special :> Post '[JSON] (Maybe (Key Special))
   :<|> "special" :> "day" :> Capture "day" Day  :> Get  '[JSON] [Special]
   :<|> "special" :> "description" :> Capture "description" Text  :> Get  '[JSON] [Special]
+  :<|> "special" :> "restaurantName" :> Capture "restaurantName" Text  :> Get  '[JSON] [Special]
   :<|> "special" :> Get  '[JSON] [Special]
 
 api :: Proxy Api
