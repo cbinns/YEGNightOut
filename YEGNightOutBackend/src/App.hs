@@ -89,8 +89,8 @@ server pool = restaurantAddH
 
     specialGetByRestaurantName :: Text -> IO [Special]
     specialGetByRestaurantName rname = flip runSqlPersistMPool pool $ do
-      let sql = "select ?? from special, restaurant where rid = restaurant_id and name like ?"
-      mSpecial <- (rawSql sql [PersistText (pack ("%" ++ (unpack rname) ++ "%"))])
+      let sql = "select ?? from special, restaurant where rid = restaurant_id and name = ?"
+      mSpecial <- (rawSql sql [PersistText rname])
       return $ entityVal <$> mSpecial
 
     specialGetAll :: IO [Special]
