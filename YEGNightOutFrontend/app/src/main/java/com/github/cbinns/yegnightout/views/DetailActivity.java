@@ -57,11 +57,16 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Special>> call, Response<List<Special>> response) {
                 //loadingProgressBar.setVisibility(View.GONE);
-
+                StringBuilder builder = new StringBuilder();
 
                 for (Special special: response.body()) {
-                    Log.i("HI", special.getDescription());
+                    builder.append(special.getDay());
+                    builder.append(": ");
+                    builder.append(special.getDescription());
+                    builder.append("\n");
                 }
+
+                specials.setText(builder.toString());
             }
 
             @Override
