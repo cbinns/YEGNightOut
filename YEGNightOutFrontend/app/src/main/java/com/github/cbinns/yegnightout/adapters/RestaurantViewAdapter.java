@@ -10,15 +10,15 @@ import com.github.cbinns.yegnightout.R;
 import com.github.cbinns.yegnightout.holders.RestaurantViewHolder;
 import com.github.cbinns.yegnightout.models.Restaurant;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantViewAdapter extends RecyclerView.Adapter<RestaurantViewHolder> {
 
-    private ArrayList<Restaurant> restaurants;
+    private List<Restaurant> restaurants;
     private Context context;
 
-    public RestaurantViewAdapter(ArrayList<Restaurant> restaurantArrayList, Context context) {
-        this.restaurants = restaurantArrayList;
+    public RestaurantViewAdapter(List<Restaurant> restaurantList, Context context) {
+        this.restaurants = restaurantList;
         this.context = context;
     }
 
@@ -50,6 +50,10 @@ public class RestaurantViewAdapter extends RecyclerView.Adapter<RestaurantViewHo
         super.onAttachedToRecyclerView(recyclerView);
     }
 
+    public void updateRestaurantList(List<Restaurant> restaurants) {
+        this.restaurants = restaurants;
+    }
+
     // Insert a new item to the RecyclerView on a predefined position
     public void insert(int position, Restaurant restaurant) {
         restaurants.add(position, restaurant);
@@ -61,5 +65,9 @@ public class RestaurantViewAdapter extends RecyclerView.Adapter<RestaurantViewHo
         int position = restaurants.indexOf(restaurant);
         restaurants.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public void clear() {
+        this.restaurants.clear();
     }
 }

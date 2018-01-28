@@ -1,37 +1,32 @@
 package com.github.cbinns.yegnightout.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+
 /**
  * Created by Abinsi on 1/27/2018.
  */
 
-public class Special {
+public class Special implements Serializable {
+    @SerializedName("day")
     private String day;
-    private String deal;
-
-    public Special(){
-        // tada; default values
-        this.day="No day";
-        this.deal="No Deal 4 u";
-    }
-
-    public Special(String day, String deal){
-        this.day=day;
-        this.deal=deal;
-    }
+    @SerializedName("description")
+    private String description;
 
     public String getDay() {
         return day;
-    }
-
-    public String getDeal() {
-        return deal;
     }
 
     public void setDay(String day) {
         this.day = day;
     }
 
-    public void setDeal(String deal) {
-        this.deal = deal;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
