@@ -68,7 +68,8 @@ server pool = restaurantAddH
     specialAdd :: Special -> IO (Maybe (Key Special))
     specialAdd newSpecial = flip runSqlPersistMPool pool $ do
       exists <- selectFirst [SpecialDay ==. (specialDay newSpecial)
-                            ,SpecialDescription ==. (specialDescription newSpecial)] []
+                            ,SpecialDescription ==. (specialDescription newSpecial)
+                            ,SpecialRestaurantId ==. (specialRestaurantId newSpecial)] []
       case exists of
         Nothing -> Just <$> insert newSpecial
         Just _ -> return Nothing

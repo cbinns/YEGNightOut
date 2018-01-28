@@ -29,7 +29,8 @@ Restaurant
 Special
   day Day
   description Text
-  SpecialDayDescription day description
+  restaurantId RestaurantId
+  SpecialDayDescriptionRestaurantId day description restaurantId
   deriving Eq Read Show
 |]
 
@@ -51,8 +52,11 @@ instance FromJSON Special where
   parseJSON = withObject "Special" $ \ v ->
     Special <$> v .: "day"
             <*> v .: "description"
+            <*> v .: "restaurantId"
 
 instance ToJSON Special where
-  toJSON (Special day description) =
+  toJSON (Special day description restaurantId) =
     object [ "day" .= day
-           , "description" .= description ]
+           , "description" .= description
+           , "restaurantId" .= restaurantId ]
+
