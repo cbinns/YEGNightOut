@@ -24,7 +24,8 @@ type Api =
   :<|> "restaurant" :> "address" :> Capture "address" Text  :> Get  '[JSON] [Restaurant]
   :<|> "restaurant" :> Get  '[JSON] [Restaurant]
   :<|> "special" :> ReqBody '[JSON] Special :> Post '[JSON] (Maybe (Key Special))
-  :<|> "special" :> Capture "day" Day  :> Get  '[JSON] [Special]
+  :<|> "special" :> "day" :> Capture "day" Day  :> Get  '[JSON] [Special]
+  :<|> "special" :> "description" :> Capture "description" Text  :> Get  '[JSON] [Special]
   :<|> "special" :> Get  '[JSON] [Special]
 
 api :: Proxy Api

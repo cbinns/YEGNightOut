@@ -12,9 +12,9 @@ import           Control.Monad.Logger (runStderrLoggingT)
 import           Database.Persist.Sqlite ( ConnectionPool, createSqlitePool
                                          , runSqlPool, runSqlPersistMPool
                                          , runMigration, selectFirst, selectList, (==.)
-                                         , insert, entityVal)
+                                         , insert, entityVal, rawSql, PersistValue(..))
 import           Data.String.Conversions (cs)
-import           Data.Text (Text)
+import           Data.Text (Text, pack, unpack)
 import           Network.Wai.Handler.Warp as Warp
 
 import           Servant
@@ -30,6 +30,7 @@ server pool = restaurantAddH
          :<|> restaurantGetAllH
          :<|> specialAddH
          :<|> specialGetByDayH
+         :<|> specialGetByDescriptionH
          :<|> specialGetAllH
   where
     restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
@@ -38,6 +39,7 @@ server pool = restaurantAddH
     restaurantGetAllH = liftIO $ restaurantGetAll
     specialAddH newSpecial = liftIO $ specialAdd newSpecial
     specialGetByDayH day    = liftIO $ specialGetByDay day
+    specialGetByDescriptionH day    = liftIO $ specialGetByDescription day
     specialGetAllH = liftIO $ specialGetAll
 
     restaurantAdd :: Restaurant -> IO (Maybe (Key Restaurant))
@@ -74,6 +76,12 @@ server pool = restaurantAddH
     specialGetByDay :: Day -> IO [Special]
     specialGetByDay day = flip runSqlPersistMPool pool $ do
       mSpecial <- selectList [SpecialDay ==. day] []
+      return $ entityVal <$> mSpecial
+
+    specialGetByDescription :: Text -> IO [Special]
+    specialGetByDescription description = flip runSqlPersistMPool pool $ do
+      let sql = "select ?? from special where description like '%" ++ (unpack description) ++ "%';"
+      mSpecial <- (rawSql (pack sql) [])
       return $ entityVal <$> mSpecial
 
     specialGetAll :: IO [Special]
