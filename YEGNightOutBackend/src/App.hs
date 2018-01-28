@@ -26,6 +26,7 @@ import           OtherModels
 server :: ConnectionPool -> Server Api
 server pool = restaurantAddH
          :<|> restaurantGetByNameH
+         :<|> restaurantGetByAddressH
          :<|> restaurantGetAllH
          :<|> specialAddH
          :<|> specialGetByDayH
@@ -33,6 +34,7 @@ server pool = restaurantAddH
   where
     restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
     restaurantGetByNameH name    = liftIO $ restaurantGetByName name
+    restaurantGetByAddressH address    = liftIO $ restaurantGetByAddress address
     restaurantGetAllH = liftIO $ restaurantGetAll
     specialAddH newSpecial = liftIO $ specialAdd newSpecial
     specialGetByDayH day    = liftIO $ specialGetByDay day
@@ -49,6 +51,11 @@ server pool = restaurantAddH
     restaurantGetByName :: Text -> IO [Restaurant]
     restaurantGetByName name = flip runSqlPersistMPool pool $ do
       mRestaurant <- selectList [RestaurantName ==. name] []
+      return $ entityVal <$> mRestaurant
+
+    restaurantGetByAddress :: Text -> IO [Restaurant]
+    restaurantGetByAddress address = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectList [RestaurantAddress ==. address] []
       return $ entityVal <$> mRestaurant
 
     restaurantGetAll :: IO [Restaurant]
