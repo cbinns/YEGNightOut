@@ -7,32 +7,31 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.cbinns.yegnightout.R;
-import com.github.cbinns.yegnightout.holders.ViewHolder;
+import com.github.cbinns.yegnightout.holders.RestaurantViewHolder;
 import com.github.cbinns.yegnightout.models.Restaurant;
 
 import java.util.ArrayList;
 
-public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class RestaurantViewAdapter extends RecyclerView.Adapter<RestaurantViewHolder> {
 
     private ArrayList<Restaurant> restaurants;
     private Context context;
 
-    public RestaurantRecyclerViewAdapter(ArrayList<Restaurant> restaurantArrayList, Context context) {
+    public RestaurantViewAdapter(ArrayList<Restaurant> restaurantArrayList, Context context) {
         this.restaurants = restaurantArrayList;
         this.context = context;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Inflate the layout, initialize the View Holder
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false);
-        ViewHolder holder = new ViewHolder(v);
+        RestaurantViewHolder holder = new RestaurantViewHolder(v);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
+    public void onBindViewHolder(RestaurantViewHolder holder, int position) {
         //Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
         holder.name.setText(restaurants.get(position).getName());
         holder.address.setText(restaurants.get(position).getAddress());

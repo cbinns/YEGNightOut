@@ -8,7 +8,7 @@ public class Special {
     private String day;
     private String deal;
 
-    public Special (){
+    public Special(){
         // tada; default values
         this.day="No day";
         this.deal="No Deal 4 u";
