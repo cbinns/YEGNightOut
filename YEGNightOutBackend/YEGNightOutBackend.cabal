@@ -12,6 +12,7 @@ executable YEGNightOutBackend
   other-modules:       Api
                      , App
                      , Models
+                     , OtherModels
   build-depends:       base >=4.8 && <4.11
                      , aeson
                      , monad-logger

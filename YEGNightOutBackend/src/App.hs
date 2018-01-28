@@ -11,35 +11,83 @@ import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Logger (runStderrLoggingT)
 import           Database.Persist.Sqlite ( ConnectionPool, createSqlitePool
                                          , runSqlPool, runSqlPersistMPool
-                                         , runMigration, selectFirst, (==.)
-                                         , insert, entityVal)
+                                         , runMigration, selectFirst, selectList, (==.)
+                                         , insert, entityVal, rawSql, PersistValue(..))
 import           Data.String.Conversions (cs)
-import           Data.Text (Text)
+import           Data.Text (Text, pack, unpack)
 import           Network.Wai.Handler.Warp as Warp
 
 import           Servant
 
 import           Api
 import           Models
+import           OtherModels
 
 server :: ConnectionPool -> Server Api
-server pool =
-  userAddH :<|> userGetH
+server pool = restaurantAddH
+         :<|> restaurantGetByNameH
+         :<|> restaurantGetByAddressH
+         :<|> restaurantGetAllH
+         :<|> specialAddH
+         :<|> specialGetByDayH
+         :<|> specialGetByDescriptionH
+         :<|> specialGetAllH
   where
-    userAddH newUser = liftIO $ userAdd newUser
-    userGetH name    = liftIO $ userGet name
+    restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
+    restaurantGetByNameH name    = liftIO $ restaurantGetByName name
+    restaurantGetByAddressH address    = liftIO $ restaurantGetByAddress address
+    restaurantGetAllH = liftIO $ restaurantGetAll
+    specialAddH newSpecial = liftIO $ specialAdd newSpecial
+    specialGetByDayH day    = liftIO $ specialGetByDay day
+    specialGetByDescriptionH day    = liftIO $ specialGetByDescription day
+    specialGetAllH = liftIO $ specialGetAll
 
-    userAdd :: User -> IO (Maybe (Key User))
-    userAdd newUser = flip runSqlPersistMPool pool $ do
-      exists <- selectFirst [UserName ==. (userName newUser)] []
+    restaurantAdd :: Restaurant -> IO (Maybe (Key Restaurant))
+    restaurantAdd newRestaurant = flip runSqlPersistMPool pool $ do
+      exists <- selectFirst [RestaurantName ==. (restaurantName newRestaurant)
+                            ,RestaurantAddress ==. (restaurantAddress newRestaurant)] []
       case exists of
-        Nothing -> Just <$> insert newUser
+        Nothing -> Just <$> insert newRestaurant
         Just _ -> return Nothing
 
-    userGet :: Text -> IO (Maybe User)
-    userGet name = flip runSqlPersistMPool pool $ do
-      mUser <- selectFirst [UserName ==. name] []
-      return $ entityVal <$> mUser
+    restaurantGetByName :: Text -> IO [Restaurant]
+    restaurantGetByName name = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectList [RestaurantName ==. name] []
+      return $ entityVal <$> mRestaurant
+
+    restaurantGetByAddress :: Text -> IO [Restaurant]
+    restaurantGetByAddress address = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectList [RestaurantAddress ==. address] []
+      return $ entityVal <$> mRestaurant
+
+    restaurantGetAll :: IO [Restaurant]
+    restaurantGetAll = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectList [] []
+      return $ entityVal <$> mRestaurant
+
+    specialAdd :: Special -> IO (Maybe (Key Special))
+    specialAdd newSpecial = flip runSqlPersistMPool pool $ do
+      exists <- selectFirst [SpecialDay ==. (specialDay newSpecial)
+                            ,SpecialDescription ==. (specialDescription newSpecial)] []
+      case exists of
+        Nothing -> Just <$> insert newSpecial
+        Just _ -> return Nothing
+
+    specialGetByDay :: Day -> IO [Special]
+    specialGetByDay day = flip runSqlPersistMPool pool $ do
+      mSpecial <- selectList [SpecialDay ==. day] []
+      return $ entityVal <$> mSpecial
+
+    specialGetByDescription :: Text -> IO [Special]
+    specialGetByDescription description = flip runSqlPersistMPool pool $ do
+      let sql = "select ?? from special where description like '%" ++ (unpack description) ++ "%';"
+      mSpecial <- (rawSql (pack sql) [])
+      return $ entityVal <$> mSpecial
+
+    specialGetAll :: IO [Special]
+    specialGetAll = flip runSqlPersistMPool pool $ do
+      mSpecial <- selectList [] []
+      return $ entityVal <$> mSpecial
 
 app :: ConnectionPool -> Application
 app pool = serve api $ server pool

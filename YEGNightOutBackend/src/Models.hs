@@ -15,20 +15,44 @@ import Data.Text
 
 import Database.Persist.TH
 
+import OtherModels
+
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-User
+Restaurant
   name Text
-  age  Int
-  UniqueName name
+  address  Text
+  lat Double Maybe
+  lon Double Maybe
+  RestaurantNameAddress name address
+  deriving Eq Read Show
+
+Special
+  day Day
+  description Text
+  SpecialDayDescription day description
   deriving Eq Read Show
 |]
 
-instance FromJSON User where
-  parseJSON = withObject "User" $ \ v ->
-    User <$> v .: "name"
-         <*> v .: "age"
+instance FromJSON Restaurant where
+  parseJSON = withObject "Restaurant" $ \ v ->
+    Restaurant <$> v .: "name"
+               <*> v .: "address"
+               <*> v .:! "lat"
+               <*> v .:! "lon"
 
-instance ToJSON User where
-  toJSON (User name age) =
+instance ToJSON Restaurant where
+  toJSON (Restaurant name address lat lon) =
     object [ "name" .= name
-           , "age"  .= age  ]
+           , "address"  .= address
+           , "lat" .= lat
+           , "lon" .= lon ]
+
+instance FromJSON Special where
+  parseJSON = withObject "Special" $ \ v ->
+    Special <$> v .: "day"
+            <*> v .: "description"
+
+instance ToJSON Special where
+  toJSON (Special day description) =
+    object [ "day" .= day
+           , "description" .= description ]
