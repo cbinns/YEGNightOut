@@ -3,6 +3,7 @@ package com.github.cbinns.yegnightout.views;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView tName;
     private TextView specials;
     private SpecialApi specialApi;
+    private ImageView restaurantTopImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class DetailActivity extends AppCompatActivity {
 
         this.tName = (TextView) findViewById(R.id.name);
         this.specials = (TextView) findViewById(R.id.restaurantSpecials);
+        this.restaurantTopImage = (ImageView) findViewById(R.id.restaurantTopImage);
 
         this.tName.setText(name);
 
