@@ -9,10 +9,20 @@ import java.io.Serializable;
  */
 
 public class Restaurant implements Serializable {
+    @SerializedName("id")
+    private Integer id;
     @SerializedName("name")
     private String name;
     @SerializedName("address")
     private String address;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -9,7 +9,10 @@ import android.widget.Toast;
 import com.github.cbinns.yegnightout.R;
 import com.github.cbinns.yegnightout.adapters.RestaurantViewAdapter;
 import com.github.cbinns.yegnightout.controllers.RestaurantApi;
+import com.github.cbinns.yegnightout.controllers.SpecialApi;
 import com.github.cbinns.yegnightout.models.Restaurant;
+import com.github.cbinns.yegnightout.models.Special;
+import com.github.cbinns.yegnightout.singletons.RestaurantsSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
                 //loadingProgressBar.setVisibility(View.GONE);
 
-                restaurantViewAdapter.updateRestaurantList(response.body());
+                RestaurantsSingleton restaurants = RestaurantsSingleton.getInstance();
+
+                restaurants.setRestaurants(response.body());
+
+                restaurantViewAdapter.updateRestaurantList(restaurants.getRestaurants());
                 restaurantViewAdapter.notifyDataSetChanged();
             }
 

@@ -2,6 +2,8 @@ package com.github.cbinns.yegnightout.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.cbinns.yegnightout.R;
@@ -18,8 +20,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_RESTAURANT_NAME = "DetailActivity.Restaurant";
-    private SpecialApi specialApi;
     private String name;
+    private TextView tName;
+    private TextView specials;
+    private SpecialApi specialApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,11 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.detail_view);
 
         this.name = (String) getIntent().getSerializableExtra(EXTRA_RESTAURANT_NAME);
+
+        this.tName = (TextView) findViewById(R.id.name);
+        this.specials = (TextView) findViewById(R.id.restaurantSpecials);
+
+        this.tName.setText(name);
 
         initializeSpecialApi();
     }
@@ -43,11 +52,14 @@ public class DetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        specialApi.getSpecials(this.name).enqueue(new Callback<List<Special>>() {
+        specialApi.getSpecial(this.name).enqueue(new Callback<List<Special>>() {
+
             @Override
             public void onResponse(Call<List<Special>> call, Response<List<Special>> response) {
-                Toast.makeText(DetailActivity.this, "It worked", Toast.LENGTH_SHORT).show();
                 //loadingProgressBar.setVisibility(View.GONE);
+                for (Special special: response.body()) {
+                    Log.i("HI", special.getDescription());
+                }
             }
 
             @Override

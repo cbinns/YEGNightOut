@@ -1,6 +1,5 @@
 package com.github.cbinns.yegnightout.controllers;
 
-import com.github.cbinns.yegnightout.models.Restaurant;
 import com.github.cbinns.yegnightout.models.Special;
 
 import java.util.List;
@@ -14,6 +13,6 @@ import retrofit2.http.Path;
  */
 
 public interface SpecialApi {
-    @GET("/special/{name}")
-    Call<List<Special>> getSpecials(@Path("name") String name);
+    @GET("/special/restaurantName/{name}")
+    Call<List<Special>> getSpecial(@Path("name") String name);
 }
