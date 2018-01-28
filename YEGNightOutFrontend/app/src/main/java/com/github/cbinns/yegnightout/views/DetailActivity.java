@@ -57,6 +57,8 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Special>> call, Response<List<Special>> response) {
                 //loadingProgressBar.setVisibility(View.GONE);
+
+
                 for (Special special: response.body()) {
                     Log.i("HI", special.getDescription());
                 }
