@@ -20,9 +20,11 @@ import OtherModels
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Restaurant
   name Text
+  rid Int
   address  Text
   lat Double Maybe
   lon Double Maybe
+  Primary rid
   RestaurantNameAddress name address
   deriving Eq Read Show
 
@@ -37,13 +39,15 @@ Special
 instance FromJSON Restaurant where
   parseJSON = withObject "Restaurant" $ \ v ->
     Restaurant <$> v .: "name"
+               <*> v .: "rid"
                <*> v .: "address"
                <*> v .:! "lat"
                <*> v .:! "lon"
 
 instance ToJSON Restaurant where
-  toJSON (Restaurant name address lat lon) =
-    object [ "name" .= name
+  toJSON (Restaurant name rid address lat lon) =
+    object [ "id" .= rid
+           , "name" .= name
            , "address"  .= address
            , "lat" .= lat
            , "lon" .= lon ]
