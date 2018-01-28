@@ -5,6 +5,17 @@ def main():
     f = open("FaFiFotography-YegFood.csv")
     lines = assertions(f)
 
+    uniqueRestaurantNames = set()
+
+    for line in lines:
+        uniqueRestaurantNames.append(line[0])
+        #print(line[0])
+
+    uniqueRestaurantNamesList = list(uniqueRestaurantNames)
+
+    for restaurantName in uniqueRestaurantNamesList:
+        pass
+
 def assertions(f):
     lines = []
     for line in f:
