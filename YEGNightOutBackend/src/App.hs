@@ -11,7 +11,7 @@ import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Logger (runStderrLoggingT)
 import           Database.Persist.Sqlite ( ConnectionPool, createSqlitePool
                                          , runSqlPool, runSqlPersistMPool
-                                         , runMigration, selectFirst, (==.)
+                                         , runMigration, selectFirst, selectList, (==.)
                                          , insert, entityVal)
 import           Data.String.Conversions (cs)
 import           Data.Text (Text)
@@ -24,13 +24,15 @@ import           Models
 import           OtherModels
 
 server :: ConnectionPool -> Server Api
-server pool =
-  restaurantAddH :<|> restaurantGetH :<|> specialAddH :<|> specialGetH
+server pool = restaurantAddH
+         :<|> restaurantGetByNameH
+         :<|> specialAddH
+         :<|> specialGetByDayH
   where
     restaurantAddH newRestaurant = liftIO $ restaurantAdd newRestaurant
-    restaurantGetH name    = liftIO $ restaurantGet name
+    restaurantGetByNameH name    = liftIO $ restaurantGetByName name
     specialAddH newSpecial = liftIO $ specialAdd newSpecial
-    specialGetH day    = liftIO $ specialGet day
+    specialGetByDayH day    = liftIO $ specialGetByDay day
 
     restaurantAdd :: Restaurant -> IO (Maybe (Key Restaurant))
     restaurantAdd newRestaurant = flip runSqlPersistMPool pool $ do
@@ -40,9 +42,9 @@ server pool =
         Nothing -> Just <$> insert newRestaurant
         Just _ -> return Nothing
 
-    restaurantGet :: Text -> IO (Maybe Restaurant)
-    restaurantGet name = flip runSqlPersistMPool pool $ do
-      mRestaurant <- selectFirst [RestaurantName ==. name] []
+    restaurantGetByName :: Text -> IO [Restaurant]
+    restaurantGetByName name = flip runSqlPersistMPool pool $ do
+      mRestaurant <- selectList [RestaurantName ==. name] []
       return $ entityVal <$> mRestaurant
 
     specialAdd :: Special -> IO (Maybe (Key Special))
@@ -53,9 +55,9 @@ server pool =
         Nothing -> Just <$> insert newSpecial
         Just _ -> return Nothing
 
-    specialGet :: Day -> IO (Maybe Special)
-    specialGet day = flip runSqlPersistMPool pool $ do
-      mSpecial <- selectFirst [SpecialDay ==. day] []
+    specialGetByDay :: Day -> IO [Special]
+    specialGetByDay day = flip runSqlPersistMPool pool $ do
+      mSpecial <- selectList [SpecialDay ==. day] []
       return $ entityVal <$> mSpecial
 
 app :: ConnectionPool -> Application

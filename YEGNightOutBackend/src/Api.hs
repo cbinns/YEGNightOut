@@ -20,9 +20,9 @@ import Servant.API
 
 type Api =
        "restaurant" :> ReqBody '[JSON] Restaurant :> Post '[JSON] (Maybe (Key Restaurant))
-  :<|> "restaurant" :> Capture "name" Text  :> Get  '[JSON] (Maybe Restaurant)
+  :<|> "restaurant" :> Capture "name" Text  :> Get  '[JSON] [Restaurant]
   :<|> "special" :> ReqBody '[JSON] Special :> Post '[JSON] (Maybe (Key Special))
-  :<|> "special" :> Capture "day" Day  :> Get  '[JSON] (Maybe Special)
+  :<|> "special" :> Capture "day" Day  :> Get  '[JSON] [Special]
 
 api :: Proxy Api
 api = Proxy
