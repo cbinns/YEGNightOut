@@ -1,20 +1,40 @@
 #!/usr/local/bin/python3
 
 def main():
-    print("I'm the csvMonster, I like eating CSVs")
+    # print("I'm the csvMonster, I like eating CSVs")
     f = open("FaFiFotography-YegFood.csv")
-    lines = assertions(f)
+    lines = assertions(f)  # get data in list, strip surrounding, and run assertions
 
-    uniqueRestaurantNames = set()
+    uniqueRestaurantNamesAndAddresses = set()
 
-    for line in lines:
-        uniqueRestaurantNames.append(line[0])
-        #print(line[0])
+    for l in lines:
+        uniqueRestaurantNamesAndAddresses.add((l[0], l[1]))
 
-    uniqueRestaurantNamesList = list(uniqueRestaurantNames)
+    uniqueRestaurantNamesAndAddresses = list(uniqueRestaurantNamesAndAddresses)
 
-    for restaurantName in uniqueRestaurantNamesList:
-        pass
+    for index in range(len(uniqueRestaurantNamesAndAddresses)):
+        name = uniqueRestaurantNamesAndAddresses[index][0]
+        address = uniqueRestaurantNamesAndAddresses[index][1]
+        print("insert into restaurant(rid,name,address) values ("
+                + str(index) + ',"' + name + '","' + address + '");')
+
+    for l in lines:
+        name = l[0]
+        address = l[1]
+        day = l[2]
+        desc = l[3]
+        t = (name,address)
+        index = find(name, uniqueRestaurantNamesAndAddresses)
+        if(index >= 0):
+            print('insert into special(day,description,restaurant_id) values ("'
+                    + day + '","' + desc + '",' + str(index) + ');')
+
+def find(name, l):
+    for index in range(len(l)):
+        n = l[index][0]
+        if(n == name):
+            return index
+    return -1
 
 def assertions(f):
     lines = []
