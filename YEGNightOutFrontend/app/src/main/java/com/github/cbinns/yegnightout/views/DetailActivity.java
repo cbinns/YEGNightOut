@@ -1,14 +1,11 @@
 package com.github.cbinns.yegnightout.views;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.github.cbinns.yegnightout.R;
 import com.github.cbinns.yegnightout.controllers.SpecialApi;
-import com.github.cbinns.yegnightout.models.Restaurant;
 import com.github.cbinns.yegnightout.models.Special;
 
 import java.util.List;
