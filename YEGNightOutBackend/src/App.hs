@@ -68,7 +68,8 @@ server pool = restaurantAddH
     specialAdd :: Special -> IO (Maybe (Key Special))
     specialAdd newSpecial = flip runSqlPersistMPool pool $ do
       exists <- selectFirst [SpecialDay ==. (specialDay newSpecial)
-                            ,SpecialDescription ==. (specialDescription newSpecial)] []
+                            ,SpecialDescription ==. (specialDescription newSpecial)
+                            ,SpecialRestaurantId ==. (specialRestaurantId newSpecial)] []
       case exists of
         Nothing -> Just <$> insert newSpecial
         Just _ -> return Nothing
@@ -80,8 +81,8 @@ server pool = restaurantAddH
 
     specialGetByDescription :: Text -> IO [Special]
     specialGetByDescription description = flip runSqlPersistMPool pool $ do
-      let sql = "select ?? from special where description like '%" ++ (unpack description) ++ "%';"
-      mSpecial <- (rawSql (pack sql) [])
+      let sql = "select ?? from special where description like ?"
+      mSpecial <- (rawSql sql [PersistText (pack ("%" ++ (unpack description) ++ "%"))])
       return $ entityVal <$> mSpecial
 
     specialGetAll :: IO [Special]
