@@ -80,8 +80,8 @@ server pool = restaurantAddH
 
     specialGetByDescription :: Text -> IO [Special]
     specialGetByDescription description = flip runSqlPersistMPool pool $ do
-      let sql = "select ?? from special where description like '%" ++ (unpack description) ++ "%';"
-      mSpecial <- (rawSql (pack sql) [])
+      let sql = "select ?? from special where description like ?"
+      mSpecial <- (rawSql sql [PersistText (pack ("%" ++ (unpack description) ++ "%"))])
       return $ entityVal <$> mSpecial
 
     specialGetAll :: IO [Special]
