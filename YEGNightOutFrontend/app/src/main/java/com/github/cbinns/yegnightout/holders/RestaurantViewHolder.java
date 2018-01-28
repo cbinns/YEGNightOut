@@ -1,14 +1,12 @@
 package com.github.cbinns.yegnightout.holders;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.github.cbinns.yegnightout.DetailActivity;
+import com.github.cbinns.yegnightout.views.DetailActivity;
 import com.github.cbinns.yegnightout.R;
 
 /**
